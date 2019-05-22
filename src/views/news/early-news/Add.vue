@@ -48,7 +48,7 @@
                    label="封面缩略图">
         <p class="upload-pic-tip">(支持jpg/jpeg/png格式,不超过2M)</p>
         <input type="hidden"
-               v-decorator="['coverUrl',{ rules: [{ required: true, message: '请选择图片' }] }]"/>
+               v-decorator="['article_url',{ rules: [{ required: true, message: '请选择图片' }] }]"/>
         <a-upload
           @change="handleChange"
           :customRequest="handleRequestUploadPic"
@@ -98,7 +98,7 @@
                    :wrapper-col="{span: 10}"
                    label="文章分类">
         <a-select placeholder="请选择文章分类"
-                  v-decorator="['news',{ rules: [{ required: true, message:'请选择文章分类' }], initialValue: formData.classification && String(formData.classification) }]">
+                  v-decorator="['classification',{ rules: [{ required: true, message:'请选择文章分类' }], initialValue: formData.classification && String(formData.classification) }]">
           <a-select-option v-for="(v, i) in newsTypes"
                            :value="v.value"
                            :key="i">
@@ -151,7 +151,7 @@
                    :label-col="{span: 2}"
                    :wrapper-col="{span: 10}">
         <a-input placeholder="请输入地址"
-                 v-decorator="[ 'ad1Url', { initialValue: formData.ad_one_goal_url }]" />
+                 v-decorator="[ 'ad_one_goal_url', { initialValue: formData.ad_one_goal_url }]" />
       </a-form-item>
 
       <!-- Part1-11: 广告位2 -->
@@ -182,7 +182,7 @@
                    :label-col="{span: 2}"
                    :wrapper-col="{span: 10}">
         <a-input placeholder="请输入地址"
-                 v-decorator="[ 'ad2Url', { initialValue: formData.ad_two_goal_url }]" />
+                 v-decorator="[ 'ad_two_goal_url', { initialValue: formData.ad_two_goal_url }]" />
       </a-form-item>
 
       <!-- Part1-13: 资讯状态 -->
@@ -421,18 +421,16 @@
       handleSubmit(e) {
         e.preventDefault();
         this.form.setFieldsValue({ content: this.articleData }); // 富文本内容赋值
-        this.coverUrl && this.form.setFieldsValue({ coverUrl: this.coverUrl });
+        this.coverUrl && this.form.setFieldsValue({ article_url: this.coverUrl });
         this.form.validateFields((err, values) => {
           if (!err) {
             // 对表单数据做相应处理
             this.formData = values;
-            this.formData.coverUrl = this.coverUrl;
-            this.formData.ad1Url = values.ad1Url || '';
-            this.formData.ad2Url = values.ad2Url || '';
+            this.formData.article_url = this.coverUrl;
+            this.formData.ad_one_url = this.ad1Url || '';
+            this.formData.ad_two_url = this.ad2Url || '';
             this.formData.released_time = moment(values.released_time).format('YYYY-MM-DD HH:mm:ss');
             this.formData.content = this.articleData;
-
-            console.log('Received values of form: ', values);
 
             // 如果有key值，则更新文章，否则添加文章
             if (this.$route.params.key) {

@@ -72,7 +72,7 @@
           <p class="article-author">作者 | <span class="">{{newsDetail&&newsDetail.author}}</span></p>
         </div>
         <div v-html="newsDetail&&newsDetail.content"></div>
-        <div class="ad-img">
+        <div class="ad-img-wrap">
           <a :href="newsDetail&&newsDetail.ad_one_goal_url" v-if="newsDetail&&newsDetail.ad_one_goal_url" target="_blank" >
             <img v-if="newsDetail&&newsDetail.ad_one_url" :src="newsDetail&&newsDetail.ad_one_url" alt="">
           </a>
@@ -255,12 +255,10 @@
           for (let i = 0; i < this.listData.length; i++) {
             this.listData[i].serial = seriesNum++;
           }
-          console.log(this.listData, 'listData');
           this.pagination.total = data.page_count;
         });
       },
       handleTableChange(pagination, filter) {
-        console.log(filter, 'filter');
         if (JSON.stringify(filter) != '{}') {
           for (const k in filter) {
             this.newsParams[k] = filter[k].join('');

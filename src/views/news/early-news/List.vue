@@ -81,9 +81,11 @@
             <p class="article-author">作者 | <span class="">{{newsDetail&&newsDetail.author}}</span></p>
           </div>
           <div v-html="newsDetail && newsDetail.content"></div>
-          <div class="ad-img">
-            <a :href="newsDetail && newsDetail.ad_one_goal_url" v-if="newsDetail&&newsDetail.ad_one_goal_url" target="_blank" >
-              <img v-if="newsDetail&&newsDetail.ad_one_url" :src="newsDetail&&newsDetail.ad_one_url" alt="">
+          <div class="ad-img-wrap">
+            <a :href="newsDetail && newsDetail.ad_one_goal_url"
+               v-if="newsDetail && newsDetail.ad_one_goal_url" target="_blank" >
+              <img v-if="newsDetail && newsDetail.ad_one_url"
+                   :src="newsDetail && newsDetail.ad_one_url" alt="">
             </a>
             <a :href="newsDetail&&newsDetail.ad_two_goal_url" v-if="newsDetail&&newsDetail.ad_two_goal_url" target="_blank" >
               <img v-if="newsDetail&&newsDetail.ad_two_url" :src="newsDetail&&newsDetail.ad_two_url" alt="">
@@ -162,6 +164,7 @@
               { text: '热点', value: '2' },
               { text: '谈资', value: '3' },
             ],
+            onFilter: (value, record) => String(value) === '' || record.sort === Number(value),
             customRender: (value) => {
               switch (value) {
                 case 1:
@@ -190,6 +193,7 @@
               { text: '热点类', value: '3' },
               { text: '综合类', value: '4' },
             ],
+            onFilter: (value, record) => String(value) === '' || record.classification === Number(value),
             customRender: (value) => {
               switch (value) {
                 case 1:
@@ -224,6 +228,7 @@
               { text: '待上架', value: '1' },
               { text: '上架', value: '2' },
             ],
+            onFilter: (value, record) => String(value) === '' || record.article_status === Number(value),
             customRender: value => (Number(value) === 2 ? '上架' : '待上架')
           },
           {
@@ -246,7 +251,6 @@
           success: (res) => {
             this.isShowLoading = false; // 关闭加载动画
             this.listData = res.data;
-            console.log(res);
           }
         });
       },

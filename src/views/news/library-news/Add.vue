@@ -383,7 +383,6 @@
     mounted() {
       const { id } = this.$route.params;
       this.uploadUrl = PYTHON_IMG_UPLOAD_URL;
-      console.log(process.env, 'env');
       this.$nextTick(() => {
         if (id) {
           getNewsDetail({ id: this.$route.params.id }).then((res) => {
@@ -398,7 +397,6 @@
             this.thumbUrl = data.article_url;
             this.ad1Url = data.ad_one_url;
             this.ad2Url = data.ad_two_url;
-            console.log(this.data, 'data');
           });
         }
       });
@@ -409,9 +407,6 @@
         this.form.setFieldsValue({ content: this.data });
         this.thumbUrl && this.form.setFieldsValue({ article_url: 1 });
         this.form.validateFields((err, values) => {
-          console.log(values.article_url, 'article_url');
-          console.log(values, 'values');
-          console.log(err, 'err');
           // 编辑时获取图片地址，图片地址不能做验证标准，所以删掉错误信息里的地址
           this.thumbUrl && err && err.article_url && delete err.article_url;
           if (!err) {
@@ -426,7 +421,6 @@
             createNews(this.formData).then((res) => {
               this.$router.push({ name: 'library_news_list' });
             });
-            console.log('form ', this.formData);
           }
         });
       },
@@ -454,7 +448,6 @@
         return isLt2M || isJPEG || isJPG || isPNG;
       },
       uploadChange(info, type) {
-        console.log(info, 'info');
         const isLt2M = info.file.size / 1024 / 1024 < 2;
         const valImg = info.file.type === 'image/jpeg'
           || info.file.type === 'image/jpg'
@@ -490,7 +483,6 @@
         switch (type) {
           case 1:
             // this.thubList = []
-            console.log(e, 'remove');
             this.form.setFieldsValue({ article_url: null });
             break;
           case 2:
@@ -503,9 +495,8 @@
             break;
         }
       },
-      onPreview(e) {
-        console.log(e, 'preview');
-        console.log(e, 'preview');
+      onPreview() {
+
       }
     }
   };
