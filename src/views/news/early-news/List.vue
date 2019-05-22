@@ -181,14 +181,14 @@
           },
           {
             title: '文章分类',
-            dataIndex: 'news',
+            dataIndex: 'classification',
             filterMultiple: false,
             filters: [
               { text: '全部', value: '' },
               { text: '技术类', value: '1' },
               { text: '价投类', value: '2' },
               { text: '热点类', value: '3' },
-              { text: '综合类', value: '3' },
+              { text: '综合类', value: '4' },
             ],
             customRender: (value) => {
               switch (value) {

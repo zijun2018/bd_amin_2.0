@@ -98,7 +98,7 @@
                    :wrapper-col="{span: 10}"
                    label="文章分类">
         <a-select placeholder="请选择文章分类"
-                  v-decorator="['news',{ rules: [{ required: true, message:'请选择文章分类' }], initialValue: formData.news && String(formData.news) }]">
+                  v-decorator="['news',{ rules: [{ required: true, message:'请选择文章分类' }], initialValue: formData.classification && String(formData.classification) }]">
           <a-select-option v-for="(v, i) in newsTypes"
                            :value="v.value"
                            :key="i">

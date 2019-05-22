@@ -112,6 +112,26 @@
           </a-select>
         </a-form-item>
         <a-form-item
+          label="文章分类"
+          :labelCol="{lg: {span: 7}, sm: {span: 7}}"
+          :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
+          <a-select
+            placeholder="请选择文章分类"
+            v-decorator="[
+            'classification',
+            {
+              rules: [{ required: true, message: '请选择文章分类' }],
+              initialValue:formData.classification&&formData.classification+''
+            }
+          ]"
+          >
+            <a-select-option value="1">技术类</a-select-option>
+            <a-select-option value="2">价投类</a-select-option>
+            <a-select-option value="3">热点类</a-select-option>
+            <a-select-option value="4">综合类</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item
           label="文章来源"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">

@@ -152,13 +152,36 @@
               switch (value) {
                 case 1:
                   return '行情';
-                  break;
                 case 2:
                   return '热点';
-                  break;
                 case 3:
                   return '谈资';
-                  break;
+              }
+            }
+          },
+          {
+            title: '文章分类',
+            dataIndex: 'classification',
+            filterMultiple: false,
+            filters: [
+              { text: '全部', value: '' },
+              { text: '技术类', value: '1' },
+              { text: '价投类', value: '2' },
+              { text: '热点类', value: '3' },
+              { text: '综合类', value: '4' },
+            ],
+            customRender: (value) => {
+              switch (value) {
+                case 1:
+                  return '技术类';
+                case 2:
+                  return '价投类';
+                case 3:
+                  return '热点类';
+                case 4:
+                  return '综合类';
+                default:
+                  return '';
               }
             }
           },
