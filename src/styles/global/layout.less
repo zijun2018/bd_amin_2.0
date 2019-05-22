@@ -36,5 +36,35 @@
 }
 
 /*********************************************/
-/*                                           */
+/*              文章预览全局设置                */
 /*********************************************/
+
+.news-preview-modal {
+    .ant-modal {
+        height: ~"calc(100vh - 200px)";
+        padding-bottom: 0;
+        overflow: hidden;
+
+        .ant-modal-header {
+            padding-right: 54px;
+        }
+
+        .ant-modal-content {
+            overflow: auto;
+            height: 100%;
+
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .ant-btn-primary {
+            display: none;
+        }
+    }
+}

@@ -1,0 +1,124 @@
+/**
+ *   @Project:   基本布局页框架的样式
+ *   @Author:    Zi_Jun
+ *   @Email:     zijun2030@gmail.com
+ *   @Date:      2019/5/17 13:54
+ *   @Note:
+ */
+
+#views-layout {
+
+    /* sider样式 */
+
+    .ant-layout-sider {
+        min-height: 100vh;
+        overflow: auto;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+
+        .logo {
+            height: 48px;
+            margin: 10px;
+            user-select: contain;
+            cursor: pointer;
+
+            img {
+                width: 48px;
+                height: 48px;
+            }
+
+            span {
+                margin-left: 10px;
+                font-size: 24px;
+                color: @base-color;
+                line-height: 48px;
+                font-weight: bold;
+            }
+
+            span.logo-icon {
+                margin-left: 4px;
+            }
+        }
+    }
+
+
+    /* header样式 */
+
+    .ant-layout-header {
+        position: fixed;
+        z-index: 9;
+        left: 0;
+        width: 100%;
+        padding-right: 16px;
+        background: #ffffff;
+        box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+        display: flex;
+        align-items: center;
+
+        .trigger {
+            padding-left: 24px;
+            font-size: 20px;
+            color: @base-color;
+            font-weight: bolder;
+            user-select: contain;
+            cursor: pointer;
+        }
+
+        .notice-text {
+            padding-left: 20px;
+            display: flex;
+            align-items: center;
+
+            svg {
+                margin-right: 10px;
+                color: @base-color;
+            }
+            p {
+                margin-bottom: 0;
+                color: @font-color-grey9;
+            }
+        }
+
+        .ant-avatar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            width: 42px;
+            height: 42px;
+            border: 1px solid @base-color;
+            background: @base-color;
+        }
+
+        .ant-btn {
+            margin-left: 10px;
+        }
+    }
+
+    /* content样式 */
+
+    .ant-layout-content {
+        .render-content {
+        min-height: ~"calc(100vh - 149px)";
+        }
+    }
+
+    /* footer样式 */
+
+    .ant-layout-footer {
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        z-index: 9;
+        width: 100%;
+    }
+
+    /* 此处优化为：logo文字的渐变显示 */
+
+    .fade-enter-active, .fade-leave-active {
+        opacity: 0;
+        transition: all .1s ease-out;
+    }
+}

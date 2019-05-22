@@ -19,7 +19,7 @@ const ROUTER_USER = [
     redirect: { name: 'user_info' },
     component: EmptyView,
     meta: {
-      auth: true,
+      auth: false,
       icon: '',
       title: '用户',
       keepAlive: false
@@ -32,7 +32,7 @@ const ROUTER_USER = [
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/Info'),
         name: 'user_info',
         meta: {
-          auth: false,
+          auth: true,
           icon: '',
           title: '个人中心',
           keepAlive: false
@@ -68,7 +68,7 @@ const ROUTER_USER = [
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult'),
         name: 'user_register_result',
         meta: {
-          auth: false,
+          auth: true,
           icon: '',
           title: '注册结果',
           keepAlive: false

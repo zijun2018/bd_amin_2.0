@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import RouterUser from './router-user';
+import RouterNews from './router-news';
+import RouterThirdNews from './router-third-news';
+import RouterComplaint from './router-complaint';
+import { isLogin } from '../utils/base-methods';
 
 Vue.use(Router);
 
@@ -24,6 +28,7 @@ const router = new Router({
     {
       path: '/home',
       component: () => import(/* webpackChunkName: "home" */ '@/views/Home'),
+      redirect: { name: 'library_news_list' },
       name: 'home',
       meta: {
         auth: true,
@@ -44,6 +49,9 @@ const router = new Router({
       },
     },
     ...RouterUser,
+    ...RouterNews,
+    ...RouterThirdNews,
+    ...RouterComplaint,
     {
       path: '*',
       component: () => import(/* webpackChunkName: "others" */ '@/views/404'),
@@ -53,15 +61,22 @@ const router = new Router({
 
 // 路由进入之前的钩子
 router.beforeEach((to, from, next) => {
-  // 验证用户是否登录
-  // if (to.matched.some(m => m.meta.auth)) {
-  //
-  // }
-  next();
+  // 验证用户是否登录，meta信息和本地存储信息同步
+  if (to.meta.auth) {
+    if (!isLogin()) {
+      // 判断当前没有登录，就跳转到登录页面
+      // router.push({ name: 'user_login', query: { successUrl: encodeURIComponent(from) } });
+      router.push({ name: 'user_login' });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 // 路由进入之后的钩子
-router.afterEach((to, from, next) => {
+router.afterEach(() => {
   // next();
 
 });

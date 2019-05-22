@@ -1,17 +1,40 @@
 <template>
-  <div class="home">
-    <p>home</p>
+  <div class="views-home">
+    <base-layout>
+      <transition name="layout-transition">
+        <router-view></router-view>
+      </transition>
+    </base-layout>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue';
+  import Layout from './layout/Layout.vue';
 
-export default {
+  export default {
   name: 'home',
+
   components: {
-    // HelloWorld,
+    BaseLayout: Layout
   },
+
+  data() {
+    return {};
+  },
+
+  computed: {
+  },
+
+  mounted() {
+
+  },
+
+  methods: {
+
+  }
 };
 </script>
+
+<style scoped lang="less">
+  @import "../styles/views/home";
+</style>

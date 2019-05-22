@@ -15,7 +15,12 @@ module.exports = {
     'space-before-function-paren': [0, 'always'], // 函数定义时括号前面要不要有空格
     'indent': ['off'],
     'eslint no-trailing-spaces': [0],
-    "camelcase": ["error", {"allow": ["zh_CN"]}]
+    'camelcase': ["error", {"allow": ["zh_CN"]}],
+    'no-param-reassign': [2, { "props": false }],
+    'object-curly-newline': ["error", { "consistent": true }],
+    'no-plusplus': [2, { allowForLoopAfterthoughts: true }],
+    'no-unused-expressions': ["error", { "allowShortCircuit": true, "allowTernary": true }],
+    'max-len': ["error", {"code": 300}]
   },
   parserOptions: {
     parser: 'babel-eslint',
