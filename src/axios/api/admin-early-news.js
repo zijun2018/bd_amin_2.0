@@ -12,6 +12,7 @@ import { requestGet, requestPost, requestUpload } from '../request';
 const apiAddress = {
   list: '/api/admin/morning_market/list',
   add: '/api/admin/morning_market/add',
+  shelf: '/api/admin/morning_market/shelf',
   update: '/api/admin/morning_market/update',
   show: '/api/admin/morning_market/show',
   delete: '/api/admin/morning_market/del',
@@ -36,14 +37,22 @@ export function postAdminMorningMarketAdd(paramObj) {
   return requestPost(apiAddress.add, paramObj);
 }
 
+/**
+ * 早盘观测内容更新
+ * @param paramObj {Object} 参数对象
+ * @return {Promise<any>}
+ */
+export function postAdminMorningMarketUpdate (paramObj) {
+  return requestPost(apiAddress.update, paramObj);
+}
 
 /**
  * 早盘观测状态更改
  * @param paramObj {Object} 参数对象
  * @return {Promise<any>}
  */
-export function postAdminMorningMarketUpdate (paramObj) {
-  return requestPost(apiAddress.update, paramObj);
+export function postAdminMorningMarketShelf (paramObj) {
+  return requestPost(apiAddress.shelf, paramObj);
 }
 
 /**

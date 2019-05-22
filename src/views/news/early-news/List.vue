@@ -36,7 +36,7 @@
                  :pagination="pagination">
           <template slot="action" slot-scope="text, record">
             <span v-if="record.article_status === 1">
-              <a-popconfirm @confirm="onShelf(record)"
+              <a-popconfirm @confirm="handleStatus(record.key)"
                             title="确认上架?"
                             v-if="listData.length">
                 <a-button ghost size="small" type="primary">上架</a-button>
@@ -104,7 +104,7 @@
 <script>
   import { Button, Input, LocaleProvider, Table, Popconfirm, Divider, Modal, message } from 'ant-design-vue';
   import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
-  import { getAdminMorningMarketList, getAdminMorningMarketShow, getAdminMorningMarketDel } from '../../../axios/api/admin-early-news';
+  import { getAdminMorningMarketList, getAdminMorningMarketShow, getAdminMorningMarketDel, postAdminMorningMarketShelf } from '../../../axios/api/admin-early-news';
 
   export default {
     name: 'NewsEarlyNewsList',
@@ -288,10 +288,18 @@
 
       /**
        * 更改上架状态
-       * @param params
+       * @param params {String} 文章key值
        */
-      onShelf() {
-
+      handleStatus(key) {
+        const params = {
+          key
+        };
+        return postAdminMorningMarketShelf({
+          params,
+          success: () => {
+            this.getEarlyNewsData();
+          }
+        });
       },
 
       /**
