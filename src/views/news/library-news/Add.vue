@@ -25,6 +25,7 @@
           ]"
             placeholder="请输入标题" />
         </a-form-item>
+        <a-locale-provider :locale="zh_CN">
         <a-form-item
           label="发布时间"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
@@ -43,6 +44,7 @@
           ]"
           />
         </a-form-item>
+        </a-locale-provider>
         <a-form-item
           label="封面缩略图"
           :labelCol="{lg: {span: 7}, sm: {span: 7}}"
@@ -155,7 +157,7 @@
             v-decorator="[
             'author',
             {
-              rules: [{ required: true, message: '请填写文章作者'},{max:255,message:'文章作者不超过255个字'}],
+              rules: [{ required: true, message: '请填写文章作者'},{max:10,message:'文章作者不超过10个字'}],
               initialValue:formData.author
             }
           ]"
@@ -299,7 +301,8 @@
 <script>
   import tinymce from 'vue-tinymce-editor';
   import moment from 'moment';
-  import { Form, Select, Upload, DatePicker, Icon, Input, Button, message } from 'ant-design-vue';
+  import { Form, Select, Upload, DatePicker, Icon, Input, Button, message, LocaleProvider } from 'ant-design-vue';
+  import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
   import { uploadImage, createNews, getNewsDetail } from '../../../axios/api/admin-news';
   import { PYTHON_IMG_UPLOAD_URL } from '../../../utils/const';
 
@@ -315,10 +318,12 @@
       ADatePicker: DatePicker,
       AIcon: Icon,
       AInput: Input,
-      AButton: Button
+      AButton: Button,
+      ALocaleProvider: LocaleProvider
     },
     data() {
       return {
+        zh_CN, // 中文
         thumbUrl: '',
         ad1Url: '',
         ad2Url: '',

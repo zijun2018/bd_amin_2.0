@@ -6,8 +6,8 @@
  *   @Note:      ——
  */
 
-const EmptyView = () => import(/* webpackChunkName: "news" */ '@/views/EmptyView');
-const LayoutHome = () => import(/* webpackChunkName: "news" */ '@/views/Home');
+const EmptyView = () => import(/* webpackChunkName: "home" */ '@/views/EmptyView');
+const LayoutHome = () => import(/* webpackChunkName: "home" */ '@/views/Home');
 
 const ROUTER_COMPLAINT = [
   // 父级路由: 投诉管理

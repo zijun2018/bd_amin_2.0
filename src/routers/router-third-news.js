@@ -6,8 +6,8 @@
  *   @Note:      ——
  */
 
-const EmptyView = () => import(/* webpackChunkName: "news" */ '@/views/EmptyView');
-const LayoutHome = () => import(/* webpackChunkName: "news" */ '@/views/Home');
+const EmptyView = () => import(/* webpackChunkName: "home" */ '@/views/EmptyView');
+const LayoutHome = () => import(/* webpackChunkName: "home" */ '@/views/Home');
 
 const ROUTER_THIRD_NEWS = [
   // 父级路由: 第三方文章审核页面

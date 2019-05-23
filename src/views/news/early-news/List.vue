@@ -33,6 +33,7 @@
         <a-table :columns="columns"
                  :dataSource="listData"
                  :loading="isShowLoading"
+                 style="word-break: break-all; word-wrap: break-word;"
                  :pagination="pagination">
           <template slot="action" slot-scope="text, record">
             <span v-if="record.article_status === 1">
@@ -71,8 +72,7 @@
         @ok="modalVisible=false"
         cancelText="关闭"
         :width='455'
-        wrapClassName="detail-wrap"
-      >
+        wrapClassName="news-preview-modal">
         <div class="detail-content">
           <div class="article-des">
             <div class="article-source">
@@ -152,6 +152,7 @@
           },
           {
             title: '标题',
+            width: 300,
             dataIndex: 'title',
           },
           {
@@ -180,6 +181,7 @@
           },
           {
             title: '文章来源',
+            width: 180,
             dataIndex: 'sources',
           },
           {
@@ -211,7 +213,7 @@
           },
           {
             title: '发布时间',
-            dataIndex: 'created_time',
+            dataIndex: 'released_time',
             customRender: value => value || '--'
           },
           {

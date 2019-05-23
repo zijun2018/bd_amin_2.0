@@ -32,6 +32,7 @@
       <a-table :columns="columns"
                :dataSource="listData"
                :loading="loading"
+               style="word-break: break-all; word-wrap: break-word;"
                :pagination="pagination"
                @change="handleTableChange">
         <template slot="action" slot-scope="text, record">
@@ -187,6 +188,7 @@
           },
           {
             title: '文章来源',
+            width: 180,
             dataIndex: 'sources',
           },
           {

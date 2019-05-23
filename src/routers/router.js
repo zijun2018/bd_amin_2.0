@@ -54,7 +54,7 @@ const router = new Router({
     ...RouterComplaint,
     {
       path: '*',
-      component: () => import(/* webpackChunkName: "others" */ '@/views/404'),
+      component: () => import(/* webpackChunkName: "home" */ '@/views/404'),
     }
   ],
 });

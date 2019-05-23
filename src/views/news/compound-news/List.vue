@@ -27,6 +27,7 @@
         <a-table :columns="columns"
                  :dataSource="listData"
                  :loading="isShowLoading"
+                 style="word-break: break-all; word-wrap: break-word;"
                  :pagination="pagination">
           <template slot="action" slot-scope="text, record">
 <!--
@@ -67,7 +68,7 @@
         @ok="modalVisible=false"
         cancelText="关闭"
         :width='455'
-        wrapClassName="detail-wrap"
+        wrapClassName="news-preview-modal"
       >
         <div class="detail-content">
           <div class="article-des">
@@ -145,6 +146,7 @@
           },
           {
             title: '标题',
+            width: 300,
             dataIndex: 'title',
           },
           {
@@ -165,37 +167,12 @@
           },
           {
             title: '文章来源',
+            width: 180,
             dataIndex: 'sources',
           },
-          // {
-          //   title: '文章分类',
-          //   dataIndex: 'news',
-          //   filterMultiple: false,
-          //   filters: [
-          //     { text: '全部', value: '' },
-          //     { text: '技术类', value: '1' },
-          //     { text: '价投类', value: '2' },
-          //     { text: '热点类', value: '3' },
-          //     { text: '综合类', value: '3' },
-          //   ],
-          //   customRender: (value) => {
-          //     switch (value) {
-          //       case 1:
-          //         return '技术类';
-          //       case 2:
-          //         return '价投类';
-          //       case 3:
-          //         return '热点类';
-          //       case 4:
-          //         return '综合类';
-          //       default:
-          //         return '';
-          //     }
-          //   }
-          // },
           {
             title: '发布时间',
-            dataIndex: 'created_time',
+            dataIndex: 'released_time',
             customRender: value => value || '--'
           },
           {

@@ -10,7 +10,7 @@
  *                  —>二级子路由: 用户注册结果页
  */
 
-const EmptyView = () => import(/* webpackChunkName: "others" */ '@/views/EmptyView');
+const EmptyView = () => import(/* webpackChunkName: "home" */ '@/views/EmptyView');
 
 const ROUTER_USER = [
   // 父级路由: 用户页面

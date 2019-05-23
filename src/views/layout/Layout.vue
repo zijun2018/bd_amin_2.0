@@ -60,9 +60,11 @@
           @click="()=> collapsed = !collapsed"
           class="trigger"/>
         <!-- Part1-2-1-2: 右侧-顶部栏-公告 -->
+<!--
         <div class="notice-text">
           <a-icon theme="filled" type="notification"/>
           <p>{{noticeText}}</p></div>
+-->
         <!-- Part1-2-1-3: 右侧-顶部栏-头像 -->
         <a-avatar>admin</a-avatar>
         <!-- Part1-2-1-4: 右侧-顶部栏-登出 -->

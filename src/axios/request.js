@@ -20,7 +20,13 @@ const ENV = process.env.NODE_ENV; // 当前环境（development/production）
 if (ENV === 'development') {
   axios.defaults.baseURL = TEST_HOST; // 测试环境接口地址，根据服务器自适应（未写定具体域名）
 } else if (ENV === 'production') {
-  axios.defaults.baseURL = BUILD_HOST; // 正式环境接口地址，根据服务器自适应（未写定具体域名）
+  // 匹配正式/测试环境
+  const isBuild = /https:\/\/(bd\.9quant\.cn)/i.test(window.location.href.toLowerCase());
+  if (isBuild) {
+    axios.defaults.baseURL = BUILD_HOST; // 正式环境接口地址，根据服务器自适应（未写定具体域名）
+  } else {
+    axios.defaults.baseURL = TEST_HOST; // 测试环境接口地址，根据服务器自适应（未写定具体域名）
+  }
 } else {
   axios.defaults.baseURL = TEST_HOST; // 其它环境接口地址，根据服务器自适应（未写定具体域名）
 }

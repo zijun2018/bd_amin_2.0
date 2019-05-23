@@ -120,7 +120,7 @@
                    :wrapper-col="{span: 10}"
                    label="文章作者">
         <a-input placeholder="请填写文章作者"
-                 v-decorator="['author', { rules: [{ required: true, message: '请填写文章作者' }, { max: 45, message: '作者不超过10个字' }], initialValue: formData.author}]" />
+                 v-decorator="['author', { rules: [{ required: true, message: '请填写文章作者' }, { max: 10, message: '作者不超过10个字' }], initialValue: formData.author}]" />
       </a-form-item>
 
       <!-- Part1-9: 广告位1 -->
@@ -275,6 +275,8 @@
         ad2Loading: false, // 是否显示上传图片的动画-广告位2
 
         currentUploadIndex: 1, // 当前上传图片的upload组件
+
+        checkPicUpload: true,
 
         articleData: '', // 文章内容数据
 
@@ -490,18 +492,20 @@
        * @param info {Object} 文件状态信息
        */
       handleChange(info) {
-        switch (Number(this.currentUploadIndex)) {
-          case 1:
-            this.coverLoading = info.file.status === 'uploading';
-            break;
-          case 2:
-            this.ad1Loading = info.file.status === 'uploading';
-            break;
-          case 3:
-            this.ad2Loading = info.file.status === 'uploading';
-            break;
-          default:
-            break;
+        if (this.checkPicUpload) {
+          switch (Number(this.currentUploadIndex)) {
+            case 1:
+              this.coverLoading = info.file.status === 'uploading';
+              break;
+            case 2:
+              this.ad1Loading = info.file.status === 'uploading';
+              break;
+            case 3:
+              this.ad2Loading = info.file.status === 'uploading';
+              break;
+            default:
+              break;
+          }
         }
       },
 
@@ -509,12 +513,27 @@
        * 上传图片之前的钩子
        */
       beforeUpload (file, fileList, index) {
+        this.checkPicUpload = true; // 上传前把图片验证状态改为true
         this.currentUploadIndex = index; // 赋值当前操作的upload组件序列号
         const isLt2M = file.size / 1024 / 1024 < 2;
         const isJPEG = file.type === 'image/jpeg';
         const isJPG = file.type === 'image/jpg';
         const isPNG = file.type === 'image/png';
         if (!isLt2M) {
+          this.checkPicUpload = false;
+          switch (Number(index)) {
+            case 1:
+              this.coverLoading = false;
+              break;
+            case 2:
+              this.ad1Loading = false;
+              break;
+            case 3:
+              this.ad2Loading = false;
+              break;
+            default:
+              break;
+          }
           message.error('图片大小不能超过2MB!');
         }
         !isJPEG && !isJPG && !isPNG && message.error('只能上传jpg/jpeg/png格式图片!');
@@ -533,35 +552,38 @@
       /**
        * 自定义上传图片到远程
        * @param obj {Object} 文件对象
-       * @return {Promise<any>}
+       * @return {boolean}
        *  type {Number} 上传图片类型： 1）缩略图 2）广告位1 3）广告位2
        */
       handleRequestUploadPic(obj) {
         const formData = new FormData();
         formData.set('fname', obj.file);
-        return getAdminMorningMarketUploadPic({
-          params: formData,
-          success: (res) => {
-            switch (Number(this.currentUploadIndex)) {
-              case 1:
-                this.coverUrl = res.url;
-                break;
-              case 2:
-                this.ad1Url = res.url;
-                break;
-              case 3:
-                this.ad2Url = res.url;
-                break;
-              default:
-                break;
+        if (this.checkPicUpload) {
+          return getAdminMorningMarketUploadPic({
+            params: formData,
+            success: (res) => {
+              switch (Number(this.currentUploadIndex)) {
+                case 1:
+                  this.coverUrl = res.url;
+                  break;
+                case 2:
+                  this.ad1Url = res.url;
+                  break;
+                case 3:
+                  this.ad2Url = res.url;
+                  break;
+                default:
+                  break;
+              }
+              message.success('上传图片成功');
+            },
+            error: (err) => {
+              console(err);
+              message.error('上传图片失败');
             }
-            message.success('上传图片成功');
-          },
-          error: (err) => {
-            console(err);
-            message.error('上传图片失败');
-          }
-        });
+          });
+        }
+        return false;
       }
     }
   };
