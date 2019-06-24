@@ -34,6 +34,7 @@
                  :dataSource="listData"
                  :loading="isShowLoading"
                  style="word-break: break-all; word-wrap: break-word;"
+                 @change="handleTableChange"
                  :pagination="pagination">
           <template slot="action" slot-scope="text, record">
             <span v-if="record.article_status === 1">
@@ -252,6 +253,16 @@
           params: this.requestParams,
           success: (res) => {
             this.isShowLoading = false; // 关闭加载动画
+            this.pagination.total = res.total;
+
+            let seriesNum = this.pagination.current * this.pagination.pageSize - (this.pagination.pageSize - 1);
+            const LEN = res.data.length;
+            if (LEN) {
+              for (let i = 0; i < LEN; i++) {
+                res.data[i].serial = seriesNum++;
+              }
+            }
+
             this.listData = res.data;
           }
         });
@@ -302,6 +313,20 @@
             this.getEarlyNewsData();
           }
         });
+      },
+
+      /**
+       * 监听页面变化
+       */
+      handleTableChange(pagination, filter) {
+        if (JSON.stringify(filter) != '{}') {
+          for (const k in filter) {
+            this.requestParams[k] = filter[k].join('');
+          }
+        }
+        this.requestParams.page = pagination.current;
+        this.pagination.current = pagination.current;
+        this.getEarlyNewsData();
       },
 
       /**

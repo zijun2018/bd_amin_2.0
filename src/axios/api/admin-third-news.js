@@ -20,7 +20,7 @@ const apiAddress = {
 
 /**
  * 第三方文章列表
- * @param paramObj {Object} 参数对象，详细可见底部注释
+ * @param paramObj {Object} 参数对象，详细可见顶部注释
  * @return {Promise<any>}
  */
 export function getAdminThirdNewsList (paramObj) {

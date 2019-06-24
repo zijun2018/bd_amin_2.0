@@ -28,24 +28,9 @@
                  :dataSource="listData"
                  :loading="isShowLoading"
                  style="word-break: break-all; word-wrap: break-word;"
+                 @change="handleTableChange"
                  :pagination="pagination">
           <template slot="action" slot-scope="text, record">
-<!--
-            <span v-if="record.article_status === 1">
-              <a-popconfirm @confirm="onShelf(record)"
-                            title="确认上架?"
-                            v-if="listData.length">
-                <a-button ghost size="small" type="primary">上架</a-button>
-              </a-popconfirm>
-              <a-divider type="vertical"/>
-            </span>
-
-            <a-button @click="jumpToEarlyNewsAdd(record.key)"
-                      ghost
-                      size="small"
-                      type="primary">编辑</a-button>
-            <a-divider type="vertical"/>
--->
             <a-button @click="reviewNews(record.key)"
                       ghost
                       size="small"
@@ -199,11 +184,22 @@
     },
 
     methods: {
+      /**
+       * 获取复盘数据
+       */
       getCompoundNewsData () {
         return getAdminCompoundList({
           params: this.requestParams,
           success: (res) => {
             this.isShowLoading = false; // 关闭加载动画
+            this.pagination.total = res.total;
+            let seriesNum = this.pagination.current * this.pagination.pageSize - (this.pagination.pageSize - 1);
+            const LEN = res.data.length;
+            if (LEN) {
+              for (let i = 0; i < LEN; i++) {
+                res.data[i].serial = seriesNum++;
+              }
+            }
             this.listData = res.data;
           }
         });
@@ -214,6 +210,20 @@
        */
       jumpToEarlyNewsAdd(key) {
         this.$router.push({ name: 'early_news_edit', params: { key } });
+      },
+
+      /**
+       * 监听页面变化
+       */
+      handleTableChange(pagination, filter) {
+        if (JSON.stringify(filter) != '{}') {
+          for (const k in filter) {
+            this.requestParams[k] = filter[k].join('');
+          }
+        }
+        this.requestParams.page = pagination.current;
+        this.pagination.current = pagination.current;
+        this.getCompoundNewsData();
       },
 
       /**
@@ -253,7 +263,7 @@
           params,
           success: () => {
             message.success('删除成功');
-            this.getEarlyNewsData();
+            this.getCompoundNewsData();
           }
         });
       },

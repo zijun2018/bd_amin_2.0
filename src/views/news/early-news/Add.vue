@@ -33,6 +33,7 @@
       <a-locale-provider :locale="zh_CN">
         <a-date-picker :showTime='true'
                        format="YYYY-MM-DD HH:mm:ss"
+                       :getCalendarContainer="triggerNode => triggerNode.parentNode"
                        placeholder="请选择时间"
                        v-decorator="[ 'released_time',{
                         rules: [{ required: true, message: '请选择发布日期'}],
@@ -46,20 +47,20 @@
                    class="cover-form-item"
                    :wrapper-col="{span: 10}"
                    label="封面缩略图">
-        <p class="upload-pic-tip">(支持jpg/jpeg/png格式,不超过2M)</p>
+        <p class="upload-pic-tip">(支持jpg/jpeg/png格式,不超过10k)</p>
         <input type="hidden"
                v-decorator="['article_url',{ rules: [{ required: true, message: '请选择图片' }] }]"/>
         <a-upload
-          @change="handleChange"
           :customRequest="handleRequestUploadPic"
           :beforeUpload="(file, fileList) => beforeUpload(file, fileList, 1)"
-          :data="requestUploadData"
-          :showUploadList="false"
+          :fileList="fileList1"
+          @preview="handlePreview"
+          @change="handleChange"
+          :remove="handleRemove1"
           accept=".jpeg,.png,.jpg"
           listType="picture-card">
-          <img v-if="coverUrl" :src="coverUrl" alt="" />
-          <div v-else>
-            <a-icon :type="coverLoading ? 'loading' : 'plus'" />
+          <div v-if="fileList1.length < 1">
+            <a-icon type="plus" />
             <div class="ant-upload-text">点击上传</div>
           </div>
         </a-upload>
@@ -70,6 +71,7 @@
                    :wrapper-col="{span: 10}"
                    label="模块分类">
         <a-select placeholder="请选择模块分类"
+                  :getPopupContainer="triggerNode => triggerNode.parentNode"
                   v-decorator="['sort',{ rules: [{ required: true, message:'请选择模块分类' }], initialValue: formData.sort && String(formData.sort)}]">
           <a-select-option v-for="(v, i) in moduleTypes"
                            :value="v.value"
@@ -84,6 +86,7 @@
                    :wrapper-col="{span: 10}"
                    label="文章标签">
         <a-select placeholder="请选择标签分类"
+                  :getPopupContainer="triggerNode => triggerNode.parentNode"
                   v-decorator="['tag',{ rules: [{ required: true, message:'请选择标签分类' }], initialValue: formData.tag && String(formData.tag) }]">
           <a-select-option v-for="(v, i) in tagTypes"
                            :value="v.value"
@@ -98,7 +101,8 @@
                    :wrapper-col="{span: 10}"
                    label="文章分类">
         <a-select placeholder="请选择文章分类"
-                  v-decorator="['classification',{ rules: [{ required: true, message:'请选择文章分类' }], initialValue: formData.classification && String(formData.classification) }]">
+                  :getPopupContainer="triggerNode => triggerNode.parentNode"
+                  v-decorator="['classification',{ rules: [{ required: false, message:'请选择文章分类' }], initialValue: formData.classification === 0 ? '' : formData.classification && String(formData.classification) }]">
           <a-select-option v-for="(v, i) in newsTypes"
                            :value="v.value"
                            :key="i">
@@ -112,7 +116,7 @@
                    :wrapper-col="{span: 10}"
                    label="文章来源">
         <a-input placeholder="请填写文章来源"
-                 v-decorator="['sources', { rules: [{ required: true, message: '请填写文章来源' }, { max: 45, message: '文章来源不超过45个字' }], initialValue: formData.sources}]" />
+                 v-decorator="['sources', { rules: [{ required: true, message: '请填写文章来源' }, { max: 255, message: '文章来源不超过255个字' }], initialValue: formData.sources}]" />
       </a-form-item>
 
       <!-- Part1-8: 文章作者 -->
@@ -120,7 +124,7 @@
                    :wrapper-col="{span: 10}"
                    label="文章作者">
         <a-input placeholder="请填写文章作者"
-                 v-decorator="['author', { rules: [{ required: true, message: '请填写文章作者' }, { max: 10, message: '作者不超过10个字' }], initialValue: formData.author}]" />
+                 v-decorator="['author', { rules: [{ required: true, message: '请填写文章作者' }, { max: 255, message: '作者不超过255个字' }], initialValue: formData.author}]" />
       </a-form-item>
 
       <!-- Part1-9: 广告位1 -->
@@ -131,16 +135,16 @@
         <input type="hidden"
                v-decorator="['ad1Url']"/>
         <a-upload
-          @change="handleChange"
           :customRequest="handleRequestUploadPic"
           :beforeUpload="(file, fileList) => beforeUpload(file, fileList, 2)"
-          :data="requestUploadData"
-          :showUploadList="false"
+          :fileList="fileList2"
+          @preview="handlePreview"
+          @change="handleChange"
+          :remove="handleRemove2"
           accept=".jpeg,.png,.jpg"
           listType="picture-card">
-          <img v-if="ad1Url" :src="ad1Url" alt="" />
-          <div v-else>
-            <a-icon :type="ad1Loading ? 'loading' : 'plus'" />
+          <div v-if="fileList2.length < 1">
+            <a-icon type="plus" />
             <div class="ant-upload-text">点击上传</div>
           </div>
         </a-upload>
@@ -162,16 +166,16 @@
         <input type="hidden"
                v-decorator="['ad2Url']"/>
         <a-upload
-          @change="handleChange"
           :customRequest="handleRequestUploadPic"
           :beforeUpload="(file, fileList) => beforeUpload(file, fileList, 3)"
-          :data="requestUploadData"
-          :showUploadList="false"
+          :fileList="fileList3"
+          @preview="handlePreview"
+          @change="handleChange"
+          :remove="handleRemove3"
           accept=".jpeg,.png,.jpg"
           listType="picture-card">
-          <img v-if="ad2Url" :src="ad2Url" alt="" />
-          <div v-else>
-            <a-icon :type="ad2Loading ? 'loading' : 'plus'" />
+          <div v-if="fileList3.length < 1">
+            <a-icon type="plus" />
             <div class="ant-upload-text">点击上传</div>
           </div>
         </a-upload>
@@ -190,6 +194,7 @@
                    :wrapper-col="{span: 10}"
                    label="资讯状态">
         <a-select placeholder="请选择资讯状态"
+                  :getPopupContainer="triggerNode => triggerNode.parentNode"
                   v-decorator="['article_status',{ rules: [{ required: true, message:'请选择资讯状态' }], initialValue: formData.article_status && String(formData.article_status)}]">
           <a-select-option v-for="(v, i) in statusTypes"
                            :value="v.value"
@@ -219,28 +224,28 @@
       </a-form-item>
     </a-form>
 
+    <!-- Part2: 图片预览层 -->
+    <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+      <img alt="" style="width: 100%" :src="previewImage" />
+    </a-modal>
   </div>
 </template>
 
 <script>
-  import {
-    Button,
-    DatePicker,
-    Form,
-    Icon,
-    Input,
-    LocaleProvider,
-    message,
-    Select,
-    Upload
-  } from 'ant-design-vue';
+  import { Button, DatePicker, Form, Icon, Input, LocaleProvider, message, Modal, Select, Upload } from 'ant-design-vue';
   import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
   import moment from 'moment';
   import 'moment/locale/zh-cn';
   import tinyMce from 'vue-tinymce-editor';
+  import { getImagename } from '../../../utils/base-methods';
   import { ADMIN_IMAGE_UPLOAD_URL } from '../../../utils/const';
   import TinyMceLanguage from '../../../static/tinymce/langs/zh_CN';
-  import { getAdminMorningMarketUploadPic, postAdminMorningMarketAdd, getAdminMorningMarketShow, postAdminMorningMarketUpdate } from '../../../axios/api/admin-early-news';
+  import {
+    getAdminMorningMarketShow,
+    getAdminMorningMarketUploadPic,
+    postAdminMorningMarketAdd,
+    postAdminMorningMarketUpdate
+  } from '../../../axios/api/admin-early-news';
 
   moment.locale('zh-cn');
   export default {
@@ -249,8 +254,6 @@
     data() {
       return {
         zh_CN, // 中文
-
-        ADMIN_IMAGE_UPLOAD_URL, // 图片上传地址
 
         formLayout: 'horizontal', // 表单排列方式，垂直
 
@@ -264,9 +267,15 @@
 
         coverUrl: '', // 预览的图片
 
+        fileList1: [], // 已经上传的文件列表,预览缩略图
+
         ad1Url: '', // 广告位1图片，已经上传的文件列表
 
+        fileList2: [], // 已经上传的文件列表,广告位1
+
         ad2Url: '', // 广告位2图片，已经上传的文件列表
+
+        fileList3: [], // 已经上传的文件列表,广告位2
 
         coverLoading: false, // 是否显示上传图片的动画-缩略图
 
@@ -274,9 +283,13 @@
 
         ad2Loading: false, // 是否显示上传图片的动画-广告位2
 
+        previewImage: '', // 预览图资源路径
+
+        previewVisible: false, // 是否展示上传图片的放大预览
+
         currentUploadIndex: 1, // 当前上传图片的upload组件
 
-        checkPicUpload: true,
+        checkPicUpload: true, // 是否通过图片上传验证
 
         articleData: '', // 文章内容数据
 
@@ -385,6 +398,7 @@
       AUpload: Upload,
       AIcon: Icon,
       ASelect: Select,
+      AModal: Modal,
       ASelectOption: Select.Option,
       TinyMce: tinyMce
     },
@@ -409,6 +423,26 @@
               this.coverUrl = res.article_url;
               this.ad1Url = res.ad_one_url;
               this.ad2Url = res.ad_two_url;
+
+              // 此处为编辑回显图片设置
+              res.article_url && (this.fileList1 = [{
+                uid: '-1',
+                name: getImagename(res.article_url),
+                status: 'done',
+                url: res.article_url
+              }]);
+              res.ad_one_url && (this.fileList2 = [{
+                uid: '-2',
+                name: getImagename(res.ad_one_url),
+                status: 'done',
+                url: res.ad_one_url
+              }]);
+              res.ad_two_url && (this.fileList3 = [{
+                uid: '-3',
+                name: getImagename(res.ad_two_url),
+                status: 'done',
+                url: res.ad_two_url
+              }]);
             }
           });
         }
@@ -428,6 +462,7 @@
           if (!err) {
             // 对表单数据做相应处理
             this.formData = values;
+            this.formData.classification = this.formData.classification || '0';
             this.formData.article_url = this.coverUrl;
             this.formData.ad_one_url = this.ad1Url || '';
             this.formData.ad_two_url = this.ad2Url || '';
@@ -448,7 +483,7 @@
                   message.error('提交失败');
                 }
               });
-            } else {
+            }
               // 添加早盘文章到数据库
               return postAdminMorningMarketAdd({
                 params: this.formData,
@@ -460,7 +495,6 @@
                   message.error('提交失败');
                 }
               });
-            }
           }
         });
       },
@@ -477,14 +511,62 @@
         this.articleData = '';
         this.coverLoading = false;
         this.ad1Loading = false;
-        this.ad2Url = false;
+        this.ad1Loading = false;
+        this.fileList1 = [];
+        this.fileList2 = [];
+        this.fileList3 = [];
         this.form.setFieldsValue({ content: '' });
       },
 
-      requestUploadData(file) {
-        return {
-          fname: file
-        };
+
+      /**
+       * 图片方法预览取消操作
+       */
+      handleCancel () {
+        this.previewVisible = false;
+      },
+
+
+      /**
+       * 删除文章缩略图图片操作，由于自带参数问题，分开写方法
+       */
+      handleRemove1 () {
+        this.form.setFieldsValue({ article_url: '' }); // 清空form表单对应的图片字段
+        this.coverUrl = ''; // 清空文章缩略图
+        this.coverLoading = false; // 改变加载状态
+        this.fileList1 = [];
+      },
+
+
+      /**
+       * 删除广告位1图片操作，由于自带参数问题，分开写方法
+       */
+      handleRemove2 () {
+        this.form.setFieldsValue({ ad_one_url: '' }); // 清空form表单对应的图片字段
+        this.ad1Url = ''; // 清空广告位1的缩略图
+        this.ad1Loading = false; // 改变加载状态
+        this.fileList2 = [];
+      },
+
+
+      /**
+      * 删除广告位3图片操作，由于自带参数问题，分开写方法
+      */
+      handleRemove3 () {
+        this.form.setFieldsValue({ ad_two_url: '' }); // 清空form表单对应的图片字段
+        this.ad2Url = ''; // 清空广告位1的缩略图
+        this.ad2Loading = false; // 改变加载状态
+        this.fileList3 = [];
+      },
+
+
+      /**
+       * 图片预览操作
+       * @param file {Object} 文件状态信息
+       */
+      handlePreview(file) {
+        this.previewImage = file.url || file.thumbUrl;
+        this.previewVisible = true;
       },
 
       /**
@@ -496,12 +578,15 @@
           switch (Number(this.currentUploadIndex)) {
             case 1:
               this.coverLoading = info.file.status === 'uploading';
+              this.fileList1 = info.fileList;
               break;
             case 2:
               this.ad1Loading = info.file.status === 'uploading';
+              this.fileList2 = info.fileList;
               break;
             case 3:
               this.ad2Loading = info.file.status === 'uploading';
+              this.fileList3 = info.fileList;
               break;
             default:
               break;
@@ -515,26 +600,33 @@
       beforeUpload (file, fileList, index) {
         this.checkPicUpload = true; // 上传前把图片验证状态改为true
         this.currentUploadIndex = index; // 赋值当前操作的upload组件序列号
-        const isLt2M = file.size / 1024 / 1024 < 2;
+        let isLt2M = false;
+        if (index === 1) {
+          isLt2M = file.size / 1024 < 10;
+        } else {
+          isLt2M = file.size / 1024 / 1024 < 2;
+        }
         const isJPEG = file.type === 'image/jpeg';
         const isJPG = file.type === 'image/jpg';
         const isPNG = file.type === 'image/png';
         if (!isLt2M) {
           this.checkPicUpload = false;
-          switch (Number(index)) {
+          switch (index) {
             case 1:
               this.coverLoading = false;
+              message.error('图片大小不能超过10k!');
               break;
             case 2:
               this.ad1Loading = false;
+              message.error('图片大小不能超过2MB!');
               break;
             case 3:
               this.ad2Loading = false;
+              message.error('图片大小不能超过2MB!');
               break;
             default:
               break;
           }
-          message.error('图片大小不能超过2MB!');
         }
         !isJPEG && !isJPG && !isPNG && message.error('只能上传jpg/jpeg/png格式图片!');
         return isLt2M || isJPEG || isJPG || isPNG;
@@ -565,21 +657,29 @@
               switch (Number(this.currentUploadIndex)) {
                 case 1:
                   this.coverUrl = res.url;
+                  this.fileList1[0].status = 'done';
+                  this.fileList1[0].response = res;
+                  this.form.setFieldsValue({ article_url: res.url });
                   break;
                 case 2:
                   this.ad1Url = res.url;
+                  this.fileList2[0].status = 'done';
+                  this.fileList2[0].response = res;
+                  this.form.setFieldsValue({ ad1Url: res.url });
                   break;
                 case 3:
                   this.ad2Url = res.url;
+                  this.fileList3[0].status = 'done';
+                  this.fileList3[0].response = res;
+                  this.form.setFieldsValue({ ad2Url: res.url });
                   break;
                 default:
                   break;
               }
-              message.success('上传图片成功');
+              message.success(`${obj.file.name}上传成功`);
             },
-            error: (err) => {
-              console(err);
-              message.error('上传图片失败');
+            error: () => {
+              message.error(`${obj.file.name}上传失败`);
             }
           });
         }

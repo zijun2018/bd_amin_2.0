@@ -1,155 +1,173 @@
 /**
-*   @Project:   资讯列表页
+*   @Project:   本地资讯列表页，已重构
 *   @Author:    Zi_Jun
 *   @Email:     zijun2030@gmail.com
-*   @Date:      2019/5/9 15:43
-*   @Note:      ——
+*   @Date:      2019/6/12 15:37
+*   @Note:      DOM基本复制早盘文章
 */
 
 
 <template>
-  <div class="news-library-news">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48" :style="{paddingBottom: '20px'}">
-          <a-col :sm="12">
-            <a-button type="primary" icon="plus" @click="jumpToNewsAdd">新建</a-button>
-          </a-col>
-          <a-col :sm="8">
-            <a-form-item label="标题">
-              <a-input v-model="queryParam.title" @keyup.13="onSearch" placeholder="请输入标题"/>
-            </a-form-item>
-          </a-col>
-          <a-col :sm="4">
-            <span class="table-page-search-submitButtons">
-              <a-button type="primary" @click="onSearch">查询</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
-    <a-locale-provider :locale="zh_CN">
-      <a-table :columns="columns"
-               :dataSource="listData"
-               :loading="loading"
-               style="word-break: break-all; word-wrap: break-word;"
-               :pagination="pagination"
-               @change="handleTableChange">
-        <template slot="action" slot-scope="text, record">
-        <span v-if="record.article_status==1">
-          <a-popconfirm
-            @confirm="onShelf(record)"
-            title="确认上架?"
-            v-if="listData.length">
-          <a-button ghost size="small" type="primary">上架</a-button>
-        </a-popconfirm>
-          <a-divider type="vertical"/>
-        </span>
-          <a-button @click="jumpToNewsEdit(record.id)" ghost size="small" type="primary">编辑</a-button>
-          <a-divider type="vertical"/>
-          <a-button @click="reviewNews(record.id)" ghost size="small" type="primary">预览</a-button>
-          <a-divider type="vertical"/>
-          <a-popconfirm
-            @confirm="onDelete(record.id)"
-            title="确认删除?"
-            v-if="listData.length">
-            <a-button ghost size="small" type="danger">删除</a-button>
-          </a-popconfirm>
-        </template>
-      </a-table>
-    </a-locale-provider>
-    <a-modal
-      :title="newsDetail&&newsDetail.title"
-      v-model="modalVisible"
-      @ok="modalVisible=false"
-      cancelText="关闭"
-      :width='455'
-      wrapClassName="news-preview-modal">
-      <div class="detail-content">
-        <div class="article-des">
-          <div class="article-source">
-            原文由 "<span class="">{{newsDetail&&newsDetail.sources}}</span>" 发布
-          </div>
-          <p class="article-author">作者 | <span class="">{{newsDetail&&newsDetail.author}}</span></p>
-        </div>
-        <div v-html="newsDetail&&newsDetail.content"></div>
-        <div class="ad-img-wrap">
-          <a :href="newsDetail&&newsDetail.ad_one_goal_url" v-if="newsDetail&&newsDetail.ad_one_goal_url" target="_blank" >
-            <img v-if="newsDetail&&newsDetail.ad_one_url" :src="newsDetail&&newsDetail.ad_one_url" alt="">
-          </a>
-          <a :href="newsDetail&&newsDetail.ad_two_goal_url" v-if="newsDetail&&newsDetail.ad_two_goal_url" target="_blank" >
-            <img v-if="newsDetail&&newsDetail.ad_two_url" :src="newsDetail&&newsDetail.ad_two_url" alt="">
-          </a>
-          <img v-if="newsDetail&&newsDetail.ad_one_url&&!newsDetail.ad_one_goal_url"  :src="newsDetail&&newsDetail.ad_one_url" alt="">
-          <img v-if="newsDetail&&newsDetail.ad_two_url&&!newsDetail.ad_two_goal_url" :src="newsDetail&&newsDetail.ad_two_url" alt="">
-        </div>
+  <div class="news-early-news-list">
+
+    <!-- Part1: 上面按钮、搜索、查询 -->
+    <div class="early-news-list-header">
+      <!-- Part1-1: 新建按钮 -->
+      <a-button icon="plus"
+                type="primary"
+                @click="jumpToLibraryNewsAdd">新建</a-button>
+      <!-- Part1-2: 标题输入 -->
+      <div class="news-list-title-input">
+        <p>标题:</p>
+        <a-input placeholder="请输入标题" v-model="titleInput" @keyup.13="handleSearch"/>
       </div>
-    </a-modal>
+      <!-- Part1-3: 查询按钮 -->
+      <a-button type="primary" @click="handleSearch">查询</a-button>
+    </div>
+
+    <!-- Part2: 列表内容 -->
+    <div class="early-news-list-section">
+
+      <!-- Part2-1: 列表数据 -->
+      <a-locale-provider :locale="zh_CN">
+        <a-table :columns="columns"
+                 :dataSource="listData"
+                 :loading="isShowLoading"
+                 style="word-break: break-all; word-wrap: break-word;"
+                 @change="handleTableChange"
+                 :pagination="pagination">
+          <template slot="action" slot-scope="text, record">
+            <span v-if="record.article_status === 1">
+              <a-popconfirm @confirm="handleStatus(record.key)"
+                            title="确认上架?"
+                            v-if="listData.length">
+                <a-button ghost size="small" type="primary">上架</a-button>
+              </a-popconfirm>
+              <a-divider type="vertical"/>
+            </span>
+
+            <a-button @click="jumpToLibraryNewsEdit(record.key)"
+                      ghost
+                      size="small"
+                      type="primary">编辑</a-button>
+            <a-divider type="vertical"/>
+            <a-button @click="reviewNews(record.key)"
+                      ghost
+                      size="small"
+                      type="primary">预览</a-button>
+            <a-divider type="vertical"/>
+            <a-popconfirm
+              @confirm="onDelete(record.key)"
+              title="确认删除?"
+              v-if="listData.length">
+              <a-button ghost size="small" type="danger">删除</a-button>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </a-locale-provider>
+
+      <!-- Part2-2: 弹出预览层 -->
+      <a-modal
+        :title="newsDetail && newsDetail.title"
+        v-model="modalVisible"
+        @ok="modalVisible=false"
+        cancelText="关闭"
+        :width='455'
+        wrapClassName="news-preview-modal">
+        <div class="detail-content">
+          <div class="article-des">
+            <div class="article-source">
+              原文由 "<span class="">{{newsDetail && newsDetail.sources}}</span>" 发布
+            </div>
+            <p class="article-author">作者 | <span class="">{{newsDetail&&newsDetail.author}}</span></p>
+          </div>
+          <div v-html="newsDetail && newsDetail.content"></div>
+          <div class="ad-img-wrap">
+            <a :href="newsDetail && newsDetail.ad_one_goal_url"
+               v-if="newsDetail && newsDetail.ad_one_goal_url" target="_blank" >
+              <img v-if="newsDetail && newsDetail.ad_one_url"
+                   :src="newsDetail && newsDetail.ad_one_url" alt="">
+            </a>
+            <a :href="newsDetail&&newsDetail.ad_two_goal_url" v-if="newsDetail&&newsDetail.ad_two_goal_url" target="_blank" >
+              <img v-if="newsDetail&&newsDetail.ad_two_url" :src="newsDetail&&newsDetail.ad_two_url" alt="">
+            </a>
+            <img v-if="newsDetail&&newsDetail.ad_one_url&&!newsDetail.ad_one_goal_url"  :src="newsDetail&&newsDetail.ad_one_url" alt="">
+            <img v-if="newsDetail&&newsDetail.ad_two_url&&!newsDetail.ad_two_goal_url" :src="newsDetail&&newsDetail.ad_two_url" alt="">
+          </div>
+        </div>
+      </a-modal>
+
+    </div>
+
   </div>
 </template>
+
 <script>
-  import {
-    Button,
-    Col,
-    Divider,
-    Form,
-    Input,
-    LocaleProvider,
-    message,
-    Modal,
-    Popconfirm,
-    Row,
-    Table
-  } from 'ant-design-vue';
-  import { editNews, getNewsDetail, getNewsList } from '../../../axios/api/admin-news';
+  import { Button, Input, LocaleProvider, Table, Popconfirm, Divider, Modal, message } from 'ant-design-vue';
   import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
+  import { getAdminNewsList, getAdminNewsDetail, getAdminNewsDel, postAdminNewsShelf } from '../../../axios/api/admin-library-news';
 
   export default {
-    name: 'newsList',
+    name: 'NewsLibraryNewsList',
 
     components: {
-      AForm: Form,
-      AFormItem: Form.Item,
-      ACol: Col,
-      ATable: Table,
       AButton: Button,
-      APopconfirm: Popconfirm,
-      ARow: Row,
-      AModal: Modal,
-      ADivider: Divider,
       AInput: Input,
-      ALocaleProvider: LocaleProvider
+      ATable: Table,
+      ALocaleProvider: LocaleProvider,
+      APopconfirm: Popconfirm,
+      ADivider: Divider,
+      AModal: Modal
     },
-    data () {
+
+    data() {
       return {
         zh_CN, // 中文
-        listData: [],
-        modalVisible: false,
-        queryParam: {
-          title: ''
+
+        titleInput: '', // 顶部查询需要输入的标题
+
+        requestParams: { // 获取列表的请求参数
+          title: '',
+          page: 1,
+          page_size: 20
         },
-        columns: [
+
+        listData: [], // 列表数据
+
+        pagination: { // 分页相关
+          current: 1,
+          pageSize: 20,
+          total: 4
+        },
+
+        isShowLoading: true, // 是否显示加载动画
+
+        modalVisible: false, // 是否展示弹出文章预览
+
+        newsDetail: null, // 文章详细数据
+
+        columns: [ // 表格表头
           {
             title: '#',
-            dataIndex: 'serial'
+            dataIndex: 'serial',
           },
           {
             title: '标题',
             width: 300,
-            dataIndex: 'title'
+            dataIndex: 'title',
           },
           {
             title: '模块分类',
-            dataIndex: 'sort',
             filterMultiple: false,
+            dataIndex: 'sort',
             filters: [
               { text: '全部', value: '' },
               { text: '行情', value: '1' },
               { text: '热点', value: '2' },
               { text: '谈资', value: '3' },
             ],
-            onFilter: (value, record) => value == '' || record.sort == value,
-            customRender: (value, row, index) => {
+            onFilter: (value, record) => String(value) === '' || record.sort === Number(value),
+            customRender: (value) => {
               switch (value) {
                 case 1:
                   return '行情';
@@ -157,8 +175,15 @@
                   return '热点';
                 case 3:
                   return '谈资';
+                default:
+                  return '';
               }
             }
+          },
+          {
+            title: '文章来源',
+            width: 180,
+            dataIndex: 'sources',
           },
           {
             title: '文章分类',
@@ -171,6 +196,7 @@
               { text: '热点类', value: '3' },
               { text: '综合类', value: '4' },
             ],
+            onFilter: (value, record) => String(value) === '' || record.classification === Number(value),
             customRender: (value) => {
               switch (value) {
                 case 1:
@@ -187,29 +213,14 @@
             }
           },
           {
-            title: '文章来源',
-            width: 180,
-            dataIndex: 'sources',
-          },
-          {
             title: '发布时间',
             dataIndex: 'released_time',
-            customRender: (value, row, index) => {
-              if (value) {
-                return value.indexOf('T') === -1 ? value : value.split('T').join(' ');
-              }
-                return '— —';
-            }
+            customRender: value => value || '--'
           },
           {
             title: '更新时间',
             dataIndex: 'updated_time',
-            customRender: (value, row, index) => {
-              if (value) {
-                return value.indexOf('T') === -1 ? value : value.split('T').join(' ');
-              }
-              return '— —';
-            }
+            customRender: value => value || '--'
           },
           {
             title: '状态',
@@ -220,134 +231,133 @@
               { text: '待上架', value: '1' },
               { text: '上架', value: '2' },
             ],
-            onFilter: (value, record) => value == '' || record.article_status == value,
-            customRender: (value, row, index) => (value == '2' ? '上架' : '待上架')
+            onFilter: (value, record) => String(value) === '' || record.article_status === Number(value),
+            customRender: value => (Number(value) === 2 ? '上架' : '待上架')
           },
           {
             title: '操作',
             dataIndex: 'action',
-            // width: '150px',
-            scopedSlots: { customRender: 'action' }
+            scopedSlots: { customRender: 'action' },
           }
-        ],
-        newsParams: {
-          page: 1,
-          limit: 20
-        },
-        pagination: {
-          current: 1,
-          pageSize: 20,
-          total: 4
-        },
-        loading: true,
-        newsDetail: null
+        ]
       };
     },
-    created() {
-      this._getNewsList(this.newsParams);
-    },
-    methods: {
-      _getNewsList(params) {
-        getNewsList(params).then((res) => {
-          this.loading = false;
-          const { data } = res;
-          this.listData = data.data;
-          let seriesNum = this.pagination.current * this.pagination.pageSize - (this.pagination.pageSize - 1);
 
-          for (let i = 0; i < this.listData.length; i++) {
-            this.listData[i].serial = seriesNum++;
+    created() {
+      this.getLibraryNewsData();
+    },
+
+    methods: {
+      getLibraryNewsData() {
+        return getAdminNewsList({
+          params: this.requestParams,
+          success: (res) => {
+            this.isShowLoading = false; // 关闭加载动画
+            this.pagination.total = res.total;
+
+            let seriesNum = this.pagination.current * this.pagination.pageSize - (this.pagination.pageSize - 1);
+            const LEN = res.data.length;
+            if (LEN) {
+              for (let i = 0; i < LEN; i++) {
+                res.data[i].serial = seriesNum++;
+              }
+            }
+            this.listData = res.data;
           }
-          this.pagination.total = data.page_count;
         });
       },
+
+      /**
+       * 跳转到资讯库文章添加页
+       */
+      jumpToLibraryNewsAdd() {
+        this.$router.push({ name: 'library_news_add' });
+      },
+
+      /**
+       * 跳转到资讯库文章编辑页
+       */
+      jumpToLibraryNewsEdit(key) {
+        this.$router.push({ name: 'library_news_edit', params: { key } });
+      },
+
+      /**
+       * 预览文章
+       * @param key {String} 文章key值
+       */
+      reviewNews(key) {
+        const params = {
+          key,
+        };
+        return getAdminNewsDetail({
+          params,
+          success: (res) => {
+            this.newsDetail = res;
+            this.modalVisible = true;
+          }
+        });
+      },
+
+      /**
+       * 更改上架状态
+       * @param key {String} 文章key值
+       */
+      handleStatus(key) {
+        const params = {
+          key
+        };
+        return postAdminNewsShelf({
+          params,
+          success: () => {
+            this.getLibraryNewsData();
+          }
+        });
+      },
+
+      /**
+       * 监听页面变化
+       */
       handleTableChange(pagination, filter) {
         if (JSON.stringify(filter) != '{}') {
           for (const k in filter) {
-            this.newsParams[k] = filter[k].join('');
+            this.requestParams[k] = filter[k].join('');
           }
         }
-        this.newsParams.page = pagination.current;
+        this.requestParams.page = pagination.current;
         this.pagination.current = pagination.current;
-        this._getNewsList(this.newsParams);
+        this.getLibraryNewsData();
       },
-      onSearch() {
-        this.newsParams.title = this.queryParam.title;
-        this.newsParams.page = 1;
+
+      /**
+       * 删除文章
+       * @param key {String} 文章key值
+       */
+      onDelete (key) {
+        const params = {
+          key
+        };
+        return getAdminNewsDel({
+          params,
+          success: () => {
+            message.success('删除成功');
+            this.getLibraryNewsData();
+          }
+        });
+      },
+
+      /**
+       * 搜索
+       */
+      handleSearch() {
+        this.requestParams.title = this.titleInput;
+        this.requestParams.page = 1;
         this.pagination.current = 1;
-        this._getNewsList(this.newsParams);
-      },
-      onDelete (id) {
-        editNews({ id, deleted_at: 1 }).then((res) => {
-          message.success('删除成功');
-          this._getNewsList(this.newsParams);
-        });
-      },
-      reviewNews(id) {
-        getNewsDetail({ id }).then((res) => {
-          const { data } = res;
-          this.newsDetail = data;
-          this.modalVisible = true;
-        });
-      },
-      onShelf(params) {
-        editNews({ id: params.id, article_status: 2 }).then((res) => {
-          message.success('上架成功');
-          this._getNewsList(this.newsParams);
-        });
-      },
-      jumpToNewsAdd () {
-        this.$router.push({ name: 'library_news_add' });
-      },
-      jumpToNewsEdit (id) {
-        this.$router.push({ name: 'library_news_edit', params: { id } });
+        this.getLibraryNewsData();
       }
     }
   };
 </script>
-<style lang="less" scoped>
-  .ant-table-filter-dropdown-btns{
-    display:none;
-  }
-  .article-des{
-    color:#999;
-    margin-bottom:20px;
-    overflow: hidden;
-    span{
-      font-size: 12px;
-      color:#1C52BB;
-    }
-    .article-source,.article-author{
-      float:left;
-      margin-right:25px;
-    }
-  }
-  .detail-wrap{
-    overflow: auto;
-    .detail-content{
-      width:414px;
-      margin:0 auto;
-    }
-    img{
-      width:100%;
-      height:100%;
-    }
-    p{
-      margin:0;
-    }
-    .ant-btn-primary{
-      display:none;
-    }
-  }
-  .ad-img{
-    margin-top:40px;
-    padding-top: 20px;
-    border-top:1px solid #E2E2E2;
-    img{
-      width:100%;
-      height:100%;
-      border-radius: 5px;
-      margin-top:15px;
-    }
-  }
 
+<style scoped lang="less">
+  @import "../../../styles/views/news/early-news.less";
 </style>

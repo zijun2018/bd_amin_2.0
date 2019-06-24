@@ -133,9 +133,11 @@
 
             // 跳转到首页
             setTimeout(() => {
-              window.history.length > 1
-                ? this.$router.go(-1)
-                : this.$router.push({ name: 'home' });
+              /* 这里浏览器出现跳转空白，后续优化为哪里退出，登录后就去到哪里 */
+              // window.history.length > 1
+              //   ? this.$router.go(-1)
+              //   : this.$router.push({ name: 'home' });
+              this.$router.push({ name: 'home' });
             }, 1500);
           } else {
             message.error(err);

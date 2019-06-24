@@ -216,6 +216,12 @@ const parseQueryString = (url) => {
   return query;
 };
 
+/**
+ * 获取图片地址最后的图片名称
+ * @param str {String} 图片地址的字符串
+ */
+const getImagename = str => str.match(/[^/]+(?!.*\/)/g)[0];
+
 /** ********************************* */
 /*           数组、对象相关            */
 /** ********************************* */
@@ -309,6 +315,7 @@ export {
   checkUrl, // 验证是否是URL地址
   urlParse, // 解析路径参数
   parseQueryString, // 解析url参数，转换为参数对象模式
+  getImagename, // 获取图片地址最后的图片名称
   arrContactObject, // 两个数组合并一个对象
   getMathRound, // 五舍五入取值
   randomInt, // 取两个数之间的随机数

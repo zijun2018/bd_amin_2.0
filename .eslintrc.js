@@ -18,9 +18,10 @@ module.exports = {
     'camelcase': ["error", {"allow": ["zh_CN"]}],
     'no-param-reassign': [2, { "props": false }],
     'object-curly-newline': ["error", { "consistent": true }],
-    'no-plusplus': [2, { allowForLoopAfterthoughts: true }],
     'no-unused-expressions': ["error", { "allowShortCircuit": true, "allowTernary": true }],
-    'max-len': ["error", {"code": 300}]
+    'max-len': ["error", {"code": 300}],
+    'linebreak-style': ["off", "windows"],
+    'no-plusplus': ["off", { "allowForLoopAfterthoughts": true }]
   },
   parserOptions: {
     parser: 'babel-eslint',

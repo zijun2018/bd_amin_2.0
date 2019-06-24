@@ -24,14 +24,18 @@
           <a-col :sm="8">
             <a-select labelInValue
                       :defaultValue="{ key: '全部' }"
+                      :getPopupContainer="triggerNode => triggerNode.parentNode"
                       style="width: 240px"
                       @change="handleSelectChange">
               <a-select-option value="-1"
-                               v-if="Number(queryParam.status) !== -1">全部</a-select-option>
+                               v-if="Number(queryParam.status) !== -1">全部
+              </a-select-option>
               <a-select-option value="0"
-                               v-if="Number(queryParam.status) !== 0">未审核</a-select-option>
+                               v-if="Number(queryParam.status) !== 0">未审核
+              </a-select-option>
               <a-select-option value="1"
-                               v-if="Number(queryParam.status) !== 1">审核通过</a-select-option>
+                               v-if="Number(queryParam.status) !== 1">审核通过
+              </a-select-option>
             </a-select>
           </a-col>
 
@@ -46,12 +50,12 @@
       </a-form>
     </div>
 
+    <a-locale-provider :locale="zh_CN">
     <a-table :columns="columns"
              :dataSource="listData"
              :loading="loading"
              :pagination="pagination"
-             @change="handleTableChange"
-    >
+             @change="handleTableChange">
       <template slot="action" slot-scope="text, record">
         <span v-if="record.is_review==0">
           <a-popconfirm
@@ -73,45 +77,48 @@
         </a-popconfirm>
       </template>
     </a-table>
-
+    </a-locale-provider>
 
     <a-modal
-        :title="newsDetail&&newsDetail.title"
-        :width='455'
-        @ok="modalVisible=false"
-        cancelText="关闭"
-        v-model="modalVisible"
-        wrapClassName="news-preview-modal">
-        <div class="detail-content">
-          <div class="article-des">
-          </div>
-          <div v-html="newsDetail&&newsDetail.content"></div>
-          <div class="ad-img">
-            <a :href="newsDetail&&newsDetail.ad_one_goal_url" target="_blank"
-               v-if="newsDetail&&newsDetail.ad_one_goal_url">
-              <img :src="newsDetail&&newsDetail.ad_one_url" alt="" v-if="newsDetail&&newsDetail.ad_one_url">
-            </a>
-            <a :href="newsDetail&&newsDetail.ad_two_goal_url" target="_blank"
-               v-if="newsDetail&&newsDetail.ad_two_goal_url">
-              <img :src="newsDetail&&newsDetail.ad_two_url" alt="" v-if="newsDetail&&newsDetail.ad_two_url">
-            </a>
-            <img :src="newsDetail&&newsDetail.ad_one_url"
-                 alt="" v-if="newsDetail&&newsDetail.ad_one_url&&!newsDetail.ad_one_goal_url">
-            <img :src="newsDetail&&newsDetail.ad_two_url"
-                 alt="" v-if="newsDetail&&newsDetail.ad_two_url&&!newsDetail.ad_two_goal_url">
-          </div>
+      :title="newsDetail&&newsDetail.title"
+      :width='455'
+      @ok="modalVisible=false"
+      cancelText="关闭"
+      v-model="modalVisible"
+      wrapClassName="news-preview-modal">
+      <div class="detail-content">
+        <div class="article-des">
         </div>
-      </a-modal>
+        <div v-html="newsDetail&&newsDetail.content"></div>
+        <div class="ad-img">
+          <a :href="newsDetail&&newsDetail.ad_one_goal_url" target="_blank"
+             v-if="newsDetail&&newsDetail.ad_one_goal_url">
+            <img :src="newsDetail&&newsDetail.ad_one_url" alt="" v-if="newsDetail&&newsDetail.ad_one_url">
+          </a>
+          <a :href="newsDetail&&newsDetail.ad_two_goal_url" target="_blank"
+             v-if="newsDetail&&newsDetail.ad_two_goal_url">
+            <img :src="newsDetail&&newsDetail.ad_two_url" alt="" v-if="newsDetail&&newsDetail.ad_two_url">
+          </a>
+          <img :src="newsDetail&&newsDetail.ad_one_url"
+               alt="" v-if="newsDetail&&newsDetail.ad_one_url&&!newsDetail.ad_one_goal_url">
+          <img :src="newsDetail&&newsDetail.ad_two_url"
+               alt="" v-if="newsDetail&&newsDetail.ad_two_url&&!newsDetail.ad_two_goal_url">
+        </div>
+      </div>
+    </a-modal>
 
   </div>
 </template>
 
 <script>
-  import { Form, Col, Modal, Row, Table, Divider, Popconfirm, Button, Input, Select, message } from 'ant-design-vue';
-  import { getAdminThirdNewsList,
-    postAdminThirdNewsUpdateStatus,
+  import { Button, Col, Divider, Form, Input, message, Modal, Popconfirm, Row, Select, Table, LocaleProvider } from 'ant-design-vue';
+  import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
+  import {
+    getAdminThirdNewsDelete,
+    getAdminThirdNewsList,
     getAdminThirdNewsShow,
-    getAdminThirdNewsDelete } from '../../axios/api/admin-third-news';
+    postAdminThirdNewsUpdateStatus
+  } from '../../axios/api/admin-third-news';
 
   export default {
     name: 'newsThirdNewsList',
@@ -125,6 +132,7 @@
       ATable: Table,
       ADivider: Divider,
       APopconfirm: Popconfirm,
+      ALocaleProvider: LocaleProvider,
       AButton: Button,
       AInput: Input,
       ASelect: Select,
@@ -133,11 +141,13 @@
 
     data () {
       return {
+        zh_CN, // 中文
+
         listData: [],
         modalVisible: false,
         queryParam: {
           title: '',
-          status: -1,
+          status: -1
         },
         columns: [
           {
@@ -166,7 +176,7 @@
             dataIndex: 'is_review',
             filterMultiple: false,
             onFilter: (value, record) => value === '' || record.is_review === value,
-            customRender: (value) => String(value) === '1' ? '已审核' : '未审核'
+            customRender: value => (String(value) === '1' ? '已审核' : '未审核')
           },
           {
             title: '操作',
@@ -201,18 +211,18 @@
        */
       getThirdNewsListData (params) {
         getAdminThirdNewsList({
-            params,
-            success: (res) => {
-              this.loading = false;
-              const data = res;
-              this.listData = data.data;
-              let seriesNum = this.pagination.current * this.pagination.pageSize - (this.pagination.pageSize - 1);
+          params,
+          success: (res) => {
+            this.loading = false;
+            const data = res;
+            this.listData = data.data;
+            let seriesNum = this.pagination.current * this.pagination.pageSize - (this.pagination.pageSize - 1);
 
-              for (let i = 0; i < this.listData.length; i++) {
-                this.listData[i].serial = seriesNum++;
-              }
-              this.pagination.total = data.total;
+            for (let i = 0; i < this.listData.length; i++) {
+              this.listData[i].serial = seriesNum++;
             }
+            this.pagination.total = data.total;
+          }
         });
       },
 
@@ -223,7 +233,7 @@
        */
       handleTableChange (pagination, filter) {
         if (JSON.stringify(filter) !== '{}') {
-          for (let k in filter) {
+          for (const k in filter) {
             this.newsParams[k] = filter[k].join('');
           }
         }
@@ -303,7 +313,7 @@
        * 监听审核状态的变化
        * @param value
        */
-      handleSelectChange(value) {
+      handleSelectChange (value) {
         this.queryParam.status = Number(value.key);
       }
     }

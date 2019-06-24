@@ -9,27 +9,13 @@
 import axios from 'axios';
 import QS from 'qs';
 import { message } from 'ant-design-vue';
-import { BUILD_HOST, TEST_HOST } from './host';
 
 
 /** *************************************************** */
 /*                      环境的切换                        */
 /** *************************************************** */
 
-const ENV = process.env.NODE_ENV; // 当前环境（development/production）
-if (ENV === 'development') {
-  axios.defaults.baseURL = TEST_HOST; // 测试环境接口地址，根据服务器自适应（未写定具体域名）
-} else if (ENV === 'production') {
-  // 匹配正式/测试环境
-  const isBuild = /https:\/\/(bd\.9quant\.cn)/i.test(window.location.href.toLowerCase());
-  if (isBuild) {
-    axios.defaults.baseURL = BUILD_HOST; // 正式环境接口地址，根据服务器自适应（未写定具体域名）
-  } else {
-    axios.defaults.baseURL = TEST_HOST; // 测试环境接口地址，根据服务器自适应（未写定具体域名）
-  }
-} else {
-  axios.defaults.baseURL = TEST_HOST; // 其它环境接口地址，根据服务器自适应（未写定具体域名）
-}
+axios.defaults.baseURL = process.env.VUE_APP_BASE_URL; // 其它环境接口地址，根据服务器自适应（未写定具体域名）
 
 
 /** *************************************************** */
@@ -163,7 +149,7 @@ export function requestPost(url, paramsObj) {
  * @param paramsObj {Object} 参数对象，包含请求参数、成功回调、失败回调
  * @return {Promise<any>}
  */
-export function requestUpload(url, paramsObj) {
+export function postUpload(url, paramsObj) {
   axios(url, {
     method: 'post',
     headers: { 'content-Type': 'multipart/form-data' },

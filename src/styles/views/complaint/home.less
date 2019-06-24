@@ -1,0 +1,153 @@
+/**
+ *   @Project:   投诉管理页面样式
+ *   @Author:    Zi_Jun
+ *   @Email:     zijun2030@gmail.com
+ *   @Date:      2019/5/28 20:11
+ *   @Note:
+ */
+
+.complaint-home {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    .complaint-home-left {
+        display: flex;
+        flex-shrink: 0;
+        flex-direction: column;
+        width: 260px;
+        height: 100%;
+        //background-color: #fafafa;
+        //border-top: 1px solid #e2e2e2;
+        //border-left: 1px solid #e2e2e2;
+        //border-right: 1px solid #e2e2e2;
+        .left-header {
+            //display: flex;
+            width: 100%;
+            height: 53px;
+            padding-left: 10px;
+            font-size: 18px;
+            line-height: 53px;
+            font-weight: bolder;
+            background-color: #fafafa;
+            border-bottom: 1px solid #e2e2e2;
+            p {
+                margin-bottom: 0;
+            }
+        }
+        .left-content {
+            .complaint-news-item {
+                height: 84px;
+                padding: 10px;
+                border-bottom: 1px solid #e2e2e2;
+
+                &:hover {
+                    background-color: #87CEFA;
+                }
+                &.active {
+                    background-color: #87CEFA;
+                }
+                .item-title {
+                    width: 100%;
+                    height: 42px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    margin-bottom: 0;
+                }
+                .item-info {
+                    display: flex;
+                    justify-content: space-between;
+                    p {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+
+        .left-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 60px;
+        }
+    }
+    .complaint-home-right {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: ~"calc(100vh - 240px)";
+        overflow: auto;
+        padding-left: 10px;
+
+        .complaint-right-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 53px;
+            //margin-top: 24px;
+            padding-right: 10px;
+
+            .select-tag, .select-date {
+                display: flex;
+                align-items: center;
+                height: 53px;
+                margin-right: 100px;
+            }
+        }
+
+        .user-info-part {
+            .part1 {
+                display: flex;
+                align-items: center;
+                img {
+                    width: 28px;
+                    height: 28px;
+                    background: url("../../../assets/images/avatar_default.png");
+                    background-size: cover;
+                    border-radius: 50%;
+                }
+                p {
+                    margin-bottom: 0;
+                    margin-left: 6px;
+                    width: 174px;
+                    overflow: hidden;
+                    text-overflow:ellipsis;
+                    white-space: nowrap;
+                }
+            }
+            .part2 {
+                margin-top: 6px;
+            }
+        }
+
+        .news-operate {
+            position: fixed;
+            bottom: 69px;
+            right: 50px;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            height: 60px;
+        }
+
+        .pic-part {
+            display: flex;
+            .img-item {
+                width: 60px;
+                height: 60px;
+                overflow: hidden;
+                &:not(:nth-of-type(1)) {
+                    margin-left: 6px;
+                }
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+    }
+}

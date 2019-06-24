@@ -1,15 +1,10 @@
 {
-  "name": "zyb_ant_design",
-  "short_name": "zyb_ant_design",
+  "name": "展业宝后台管理系统",
+  "short_name": "展业宝CMS",
   "icons": [
     {
-      "src": "./img/icons/android-chrome-192x192.png",
+      "src": "./img/icons/logo.png",
       "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "./img/icons/android-chrome-512x512.png",
-      "sizes": "512x512",
       "type": "image/png"
     }
   ],

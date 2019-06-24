@@ -62,7 +62,7 @@ const ROUTER_LIBRARY_NEWS = [
           },
           // 三级子路由: 编辑资讯
           {
-            path: 'edit/:id',
+            path: 'edit/:key',
             component: () => import(/* webpackChunkName: "news" */ '@/views/news/library-news/Add'),
             name: 'library_news_edit',
             meta: {

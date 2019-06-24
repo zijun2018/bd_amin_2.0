@@ -3,11 +3,14 @@
  *   @Author:    Zi_Jun
  *   @Email:     zijun2030@gmail.com
  *   @Date:      2019/5/17 19:57
- *   @Note:
+ *   @Note:      paramOjb对象：
+ *               1）params {Object} 请求参数
+ *               2）success {Function} 成功回调
+ *               3）error {Function} 失败回调
  */
 
 
-import { requestGet, requestPost, requestUpload } from '../request';
+import { requestGet, requestPost, postUpload } from '../request';
 
 const apiAddress = {
   list: '/api/admin/morning_market/list',
@@ -79,5 +82,5 @@ export function getAdminMorningMarketDel (paramObj) {
  * @return {Promise<any>}
  */
 export function getAdminMorningMarketUploadPic (paramObj) {
-  return requestUpload(apiAddress.uploadImg, paramObj);
+  return postUpload(apiAddress.uploadImg, paramObj);
 }

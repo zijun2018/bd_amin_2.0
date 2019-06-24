@@ -19,6 +19,9 @@ function addStyleResource(rule) {
 }
 
 module.exports = {
+  publicPath: './',
+  outputDir: process.env.NODE_ENV === 'development' ? 'testdist' : 'dist', // 不同的环境打不同包名
+  assetsDir: 'static',
   chainWebpack: (config) => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal'];
     types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)));
@@ -34,7 +37,7 @@ module.exports = {
       }
     }
   },
-  lintOnSave: process.env.NODE_ENV !== 'production',
+  lintOnSave: false,
   productionSourceMap: true,
   pwa: {
     iconPaths: {
@@ -43,6 +46,19 @@ module.exports = {
       appleTouchIcon: 'favicon.ico',
       maskIcon: 'favicon.ico',
       msTileImage: 'favicon.ico'
+    }
+  },
+  configureWebpack: {
+    performance: {
+      hints: false
+    },
+    performance: {
+      hints: 'warning',
+      maxEntrypointSize: 50000000,
+      maxAssetSize: 30000000,
+      assetFilter: function (assetFilename) {
+        return assetFilename.endsWith('.js');
+      }
     }
   }
 };
